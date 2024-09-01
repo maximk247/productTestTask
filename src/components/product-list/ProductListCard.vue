@@ -1,6 +1,5 @@
 <template>
   <div class="product-card">
-    <!-- Отображение загруженного изображения -->
     <div class="image-preview">
       <img v-if="product.image" :src="product.image" alt="Изображение товара" />
     </div>

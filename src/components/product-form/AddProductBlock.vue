@@ -1,10 +1,18 @@
 <template>
-  <div class="add-product-block" @click="$emit('add-product')">
+  <div class="add-product-block" @click="handleClick">
     <span>+</span>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { defineEmits } from 'vue';
+
+const emit = defineEmits(['add-product']);
+
+const handleClick = (event: MouseEvent) => {
+  emit('add-product', event);
+};
+</script>
 
 <style scoped>
 .add-product-block {

@@ -3,7 +3,6 @@
     <div class="form-container">
       <h2>Добавить товары</h2>
       <div class="product-grid">
-        <!-- Карточки товаров -->
         <ProductFormCard
           v-for="(product, index) in cartItems"
           :key="index"
@@ -16,7 +15,6 @@
           :remove-product="removeProduct"
           :sanitize-input="sanitizeInput"
         />
-        <!-- Блок с большим "+" для добавления новой карточки -->
         <AddProductBlock @add-product="addProduct" />
       </div>
     </div>
@@ -35,8 +33,8 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import Cart from '../cart/Cart.vue';
 import AddProductBlock from './AddProductBlock.vue';
-import Cart from './Cart.vue';
 import ProductFormCard from './ProductFormCard.vue';
 
 const store = useStore();

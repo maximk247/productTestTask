@@ -1,7 +1,6 @@
 <template>
   <div class="product-card">
     <h3>Товар {{ index + 1 }}</h3>
-    <!-- Блок для загрузки изображения -->
     <div class="image-upload" @click="triggerFileInput">
       <img v-if="product.image" :src="product.image" alt="Изображение товара" />
       <div v-else class="upload-placeholder">
@@ -106,21 +105,21 @@ const onImageChange = event => {
 .image-upload {
   position: relative;
   cursor: pointer;
-  width: 300px; /* Фиксированная ширина */
-  height: 200px; /* Фиксированная высота */
+  width: 300px;
+  height: 200px;
   background-color: #f0f0f0;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin-bottom: 10px; /* Отступ снизу */
+  margin-bottom: 10px;
 }
 
 .image-upload img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Изображение сжимается и полностью видно */
+  object-fit: contain;
 }
 
 .upload-placeholder {
@@ -140,7 +139,6 @@ const onImageChange = event => {
 
 .field-group {
   display: flex;
-  align-items: center;
   flex-direction: column;
   gap: 10px;
   margin-bottom: 10px;
@@ -156,6 +154,7 @@ const onImageChange = event => {
 .quantity-container {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 5px;
 }
 
@@ -164,7 +163,13 @@ const onImageChange = event => {
   text-align: center;
 }
 
+.quantity-buttons {
+  display: flex;
+  gap: 5px;
+}
+
 .quantity-buttons button {
+  width: 40px;
   background-color: #007bff;
   color: white;
   border: none;

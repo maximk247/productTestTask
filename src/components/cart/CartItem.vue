@@ -1,8 +1,15 @@
 <template>
   <li class="cart-item">
-    <div>{{ product.name || 'Без названия' }}</div>
-    <div>{{ product.seller || 'Без селлера' }}</div>
-    <div>{{ product.integrationType }}</div>
+    <div class="cart-item-content">
+      <div v-if="product.image" class="image-preview">
+        <img :src="product.image" alt="Изображение товара" />
+      </div>
+      <div class="product-info">
+        <div>{{ product.name || 'Без названия' }}</div>
+        <div>{{ product.seller || 'Без селлера' }}</div>
+        <div>{{ product.integrationType }}</div>
+      </div>
+    </div>
     <div class="quantity-container">
       <input
         v-model="product.quantity"
@@ -43,12 +50,37 @@ const props = defineProps({
 .cart-item {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
   margin-bottom: 15px;
   padding: 10px;
   background-color: #ffffff;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.image-preview {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .quantity-container {

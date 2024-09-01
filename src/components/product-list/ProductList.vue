@@ -2,7 +2,8 @@
   <div>
     <h2>Список товаров</h2>
 
-    <!-- Компонент фильтрации и сортировки -->
+    <SearchBar :initial-query="searchQuery" @search="applySearch" />
+
     <FilterSort
       :selected-filter="selectedFilter"
       :selected-sort="selectedSort"
@@ -21,14 +22,13 @@
       />
     </div>
 
-    <!-- Компонент пагинации -->
     <Pagination
       :current-page="currentPage"
       :has-more="hasMore"
-      @go-to-first-page="goToFirstPage"
+      @first-page="goToFirstPage"
       @prev-page="prevPage"
       @next-page="nextPage"
-      @go-to-last-page="goToLastPage"
+      @last-page="goToLastPage"
     />
 
     <EditProductModal
@@ -44,19 +44,20 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
+import FilterSort from '../filter-sort/FilterSort.vue';
+import Pagination from '../shared/Pagination.vue';
 import EditProductModal from './EditProductModal.vue';
-import FilterSort from './FilterSort.vue';
-import Pagination from './Pagination.vue';
 import ProductListCard from './ProductListCard.vue';
+import SearchBar from './SearchBar.vue';
 
 const store = useStore();
 
+const searchQuery = ref('');
 const selectedFilter = ref('all');
 const selectedSort = ref('name_asc');
 
 const currentPage = computed(() => store.state.currentPage);
 const itemsPerPage = computed(() => store.state.itemsPerPage);
-const paginatedProducts = computed(() => store.getters.paginatedProducts);
 const hasMore = computed(() => store.getters.hasMore);
 const totalProducts = computed(
   () => store.getters.filteredAndSortedProducts.length
@@ -65,14 +66,25 @@ const totalPages = computed(() =>
   Math.ceil(totalProducts.value / itemsPerPage.value)
 );
 
+const paginatedProducts = computed(() => {
+  return store.getters.filteredAndSortedProducts
+    .filter(
+      product =>
+        product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        product.seller.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+    .slice(
+      (currentPage.value - 1) * itemsPerPage.value,
+      currentPage.value * itemsPerPage.value
+    );
+});
+
 const isEditModalOpen = ref(false);
 const selectedProduct = ref(null);
 const selectedIndex = ref(null);
 
-const nextPage = () => {
-  if (hasMore.value) {
-    store.dispatch('setPage', currentPage.value + 1);
-  }
+const goToFirstPage = () => {
+  store.dispatch('setPage', 1);
 };
 
 const prevPage = () => {
@@ -81,16 +93,14 @@ const prevPage = () => {
   }
 };
 
-const goToFirstPage = () => {
-  if (currentPage.value !== 1) {
-    store.dispatch('setPage', 1);
+const nextPage = () => {
+  if (hasMore.value) {
+    store.dispatch('setPage', currentPage.value + 1);
   }
 };
 
 const goToLastPage = () => {
-  if (currentPage.value !== totalPages.value) {
-    store.dispatch('setPage', totalPages.value);
-  }
+  store.dispatch('setPage', totalPages.value);
 };
 
 const deleteProduct = (index: number) => {
@@ -125,6 +135,10 @@ const applyFilter = () => {
 const applySort = () => {
   store.dispatch('setSortOrder', selectedSort.value);
 };
+
+const applySearch = (query: string) => {
+  searchQuery.value = query;
+};
 </script>
 
 <style scoped>
@@ -140,5 +154,20 @@ h2 {
   margin-top: 20px;
   min-height: 625px;
   align-content: start;
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 </style>
