@@ -34,7 +34,7 @@
           type="text"
           class="product-card__quantity-input input"
           placeholder="Количество"
-          @input="updateQuantity(index, localProduct.quantity)"
+          @input="handleQuantityInput"
         />
         <div class="product-card__quantity-buttons">
           <button
@@ -47,6 +47,7 @@
           <button
             type="button"
             class="product-card__quantity-button"
+            :disabled="localProduct.quantity <= 1"
             @click="decreaseQuantity(index)"
           >
             -
@@ -126,15 +127,24 @@ const updateImage = (image: string) => {
     localProduct.value.image = image;
   }
 };
+
+const handleQuantityInput = (event: Event) => {
+  const inputElement = event.target as HTMLInputElement;
+  // Очищаем ввод, оставляем только цифры
+  inputElement.value = inputElement.value.replace(/[^0-9]/g, '');
+  props.updateQuantity(props.index, localProduct.value.quantity);
+};
 </script>
 
 <style scoped lang="scss">
 $product-card-bg: #fff;
 $product-card-border: #e0e0e0;
-$product-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$product-card-shadow: 0 2px 8px rgb(0 0 0 / 10%);
 $product-card-radius: 8px;
 $primary-color: #007bff;
 $remove-button-bg: #dc3545;
+$small-padding: 10px;
+$small-font-size: 14px;
 
 .product-card {
   display: flex;
@@ -158,7 +168,9 @@ $remove-button-bg: #dc3545;
     margin-bottom: 10px;
   }
 
-  &__input {
+  &__input,
+  &__quantity-input,
+  &__select {
     padding: 10px;
     border: 1px solid $product-card-border;
     border-radius: $product-card-radius;
@@ -174,18 +186,20 @@ $remove-button-bg: #dc3545;
   }
 
   &__quantity-input {
-    width: 80px;
+    width: 90px;
   }
 
   &__quantity-buttons {
     display: flex;
     gap: 5px;
+    height: 100%;
   }
 
   &__quantity-button {
     width: 40px;
     background-color: $primary-color;
     color: white;
+    font-size: 20px;
     border: none;
     padding: 5px;
     cursor: pointer;
@@ -201,6 +215,95 @@ $remove-button-bg: #dc3545;
     gap: 5px;
     justify-content: flex-end;
     margin-top: 10px;
+  }
+}
+
+@media (width <= 1200px) {
+  .product-card {
+    padding: $small-padding;
+    min-height: 280px;
+
+    &__input,
+    &__quantity-input,
+    &__select {
+      padding: 8px;
+      font-size: $small-font-size;
+    }
+
+    &__quantity-input {
+      width: 80px;
+    }
+
+    &__quantity-button {
+      width: 35px;
+    }
+  }
+}
+
+@media (width <= 992px) {
+  .product-card {
+    padding: $small-padding;
+    min-height: 260px;
+
+    &__input,
+    &__quantity-input,
+    &__select {
+      padding: 7px;
+      font-size: $small-font-size;
+    }
+
+    &__quantity-input {
+      width: 70px;
+    }
+
+    &__quantity-button {
+      width: 30px;
+    }
+  }
+}
+
+@media (width <= 768px) {
+  .product-card {
+    padding: $small-padding;
+    min-height: 240px;
+
+    &__input,
+    &__quantity-input,
+    &__select {
+      padding: 6px;
+      font-size: $small-font-size;
+    }
+
+    &__quantity-input {
+      width: 60px;
+    }
+
+    &__quantity-button {
+      width: 25px;
+    }
+  }
+}
+
+@media (width <= 576px) {
+  .product-card {
+    padding: $small-padding;
+    min-height: 220px;
+
+    &__input,
+    &__quantity-input,
+    &__select {
+      padding: 5px;
+      font-size: $small-font-size;
+    }
+
+    &__quantity-input {
+      width: 50px;
+    }
+
+    &__quantity-button {
+      width: 20px;
+      font-size: $small-font-size;
+    }
   }
 }
 </style>

@@ -67,6 +67,7 @@ $border-radius: 5px;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  flex-wrap: wrap;
 
   &__button {
     padding: 8px 12px;

@@ -21,7 +21,7 @@
         v-model.number="localProduct.quantity"
         type="text"
         class="cart-item__quantity-input input"
-        @input="handleQuantityChange"
+        @input="handleQuantityInput"
       />
       <div class="cart-item__quantity-buttons">
         <button
@@ -52,20 +52,16 @@
 
 <script setup lang="ts">
 import { defineProps, reactive, watchEffect } from 'vue';
-import { Product } from '../../interfaces/ProductInterfaces';
+import { CartItemProps } from '../../interfaces/props/CartPropsInterfaces';
+import { sanitizeInput } from '../../utils/sanitazeInput';
 
-const props = defineProps<{
-  product: Product;
-  index: number;
-  updateQuantity: (index: number, quantity: number) => void;
-  increaseQuantity: (index: number) => void;
-  decreaseQuantity: (index: number) => void;
-  removeProduct: (event: MouseEvent, index: number) => void;
-}>();
+const props = defineProps<CartItemProps>();
 
 const localProduct = reactive({ ...props.product });
 
-const handleQuantityChange = () => {
+const handleQuantityInput = (event: Event) => {
+  const inputElement = event.target as HTMLInputElement;
+  inputElement.value = sanitizeInput(inputElement.value.replace(/[^0-9]/g, ''));
   if (props.updateQuantity) {
     props.updateQuantity(props.index, localProduct.quantity);
   }
@@ -78,8 +74,8 @@ watchEffect(() => {
 </script>
 
 <style scoped lang="scss">
-$background-color: #ffffff;
-$box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+$background-color: #fff;
+$box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
 $remove-btn-color: #dc3545;
 $border-radius: 4px;
 $input-padding: 5px;
@@ -125,27 +121,33 @@ $input-padding: 5px;
   &__quantity {
     display: flex;
     gap: 5px;
+    justify-content: center;
+    align-items: center;
 
     &-buttons {
       display: flex;
       gap: 5px;
+    }
 
-      &-button {
-        padding: $input-padding;
-        cursor: pointer;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: $border-radius;
+    &-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: $input-padding;
+      cursor: pointer;
+      min-width: 25px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: $border-radius;
 
-        &:hover {
-          opacity: 0.8;
-        }
+      &:hover {
+        opacity: 0.8;
+      }
 
-        &:disabled {
-          cursor: not-allowed;
-          opacity: 0.5;
-        }
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
       }
     }
   }

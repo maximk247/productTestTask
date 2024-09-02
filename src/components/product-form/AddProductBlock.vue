@@ -21,17 +21,17 @@ const handleClick = (event: MouseEvent) => {
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: rgba(128, 128, 128, 0.2);
-  color: rgba(128, 128, 128, 0.8);
+  background-color: rgb(128 128 128 / 20%);
+  color: rgb(128 128 128 / 80%);
   font-size: 48px;
   cursor: pointer;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
   min-height: 523px;
 }
 
 .add-product-block:hover {
-  background-color: rgba(128, 128, 128, 0.3);
-  color: rgba(128, 128, 128, 1);
+  background-color: rgb(128 128 128 / 30%);
+  color: rgb(128 128 128 / 100%);
 }
 </style>

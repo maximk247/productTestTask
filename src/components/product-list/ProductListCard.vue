@@ -69,7 +69,7 @@ const removeProduct = () => {
 <style scoped lang="scss">
 $product-card-bg: #f9f9f9;
 $product-card-border-radius: 8px;
-$product-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+$product-card-shadow: 0 1px 3px rgb(0 0 0 / 10%);
 $product-card-padding: 15px;
 $product-card-detail-gap: 5px;
 $button-bg-color: #007bff;

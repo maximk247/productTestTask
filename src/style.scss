@@ -29,13 +29,7 @@ html {
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
-
   width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>')
-    no-repeat right 10px center;
   background-size: 12px;
 }
 
@@ -53,18 +47,19 @@ html {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-}
-.remove-button:hover {
-  opacity: 0.8;
-}
 
-.remove-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 *,
-*:before,
-*:after {
+*::before,
+*::after {
   box-sizing: border-box;
 }

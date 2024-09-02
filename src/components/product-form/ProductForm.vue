@@ -13,12 +13,13 @@
           :increase-quantity="increaseQuantity"
           :decrease-quantity="decreaseQuantity"
           :remove-product="removeProduct"
-          :sanitize-input="sanitizeInput"
+          :sanitize-input="handleSanitizeInput"
         />
         <AddProductBlock @add-product="addProduct" />
       </div>
     </div>
     <Cart
+      class="cart-section"
       :cart-items="cartItems"
       :update-quantity="updateQuantity"
       :increase-quantity="increaseQuantity"
@@ -34,6 +35,7 @@
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { Product } from '../../interfaces/ProductInterfaces';
+import { sanitizeInput } from '../../utils/sanitazeInput';
 import Cart from '../cart/Cart.vue';
 import AddProductBlock from './AddProductBlock.vue';
 import ProductFormCard from './ProductFormCard.vue';
@@ -112,9 +114,8 @@ const removeAllProducts = () => {
   });
 };
 
-const sanitizeInput = (product: Product, field: string) => {
-  // Убираем лишние пробелы и предотвращаем пробелы в начале строки
-  product[field] = product[field].replace(/^\s+/, '').replace(/\s{2,}/g, ' ');
+const handleSanitizeInput = (product: Product, field: string) => {
+  product[field] = sanitizeInput(product[field]);
 };
 </script>
 
@@ -126,15 +127,15 @@ $border-radius: 8px;
 
 .page-container {
   display: flex;
-  justify-content: space-between;
-  gap: $gap;
-  overflow-x: hidden;
-  padding: 0 $page-padding 0 $page-padding;
+  flex-direction: column;
+  max-height: 100vh;
+  padding: 0 $page-padding;
   box-sizing: border-box;
+  overflow-y: hidden;
 }
 
 .form-section {
-  flex: 2;
+  flex: 1;
 
   &__title {
     font-size: 24px;
@@ -145,11 +146,67 @@ $border-radius: 8px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: $gap;
-    max-height: 600px;
+    max-height: calc(100vh - 120px);
     overflow-y: auto;
     padding-right: 10px;
     background-color: $container-background;
     border-radius: $border-radius;
+  }
+}
+
+@media (width <= 576px) {
+  /* stylelint-disable-next-line selector-class-pattern */
+  .form-section__grid {
+    max-height: calc(100vh - 400px);
+  }
+}
+
+@media (width >= 577px) and (width <= 768px) {
+  /* stylelint-disable-next-line selector-class-pattern */
+  .form-section__grid {
+    max-height: calc(100vh - 140px);
+  }
+}
+
+@media (width >= 769px) and (width <= 992px) {
+  /* stylelint-disable-next-line selector-class-pattern */
+  .form-section__grid {
+    max-height: calc(100vh - 130px);
+  }
+}
+
+@media (width >= 993px) {
+  /* stylelint-disable-next-line selector-class-pattern */
+  .form-section__grid {
+    max-height: calc(100vh - 120px);
+  }
+}
+
+.cart-section {
+  margin-top: auto;
+  background-color: $container-background;
+  border-radius: $border-radius;
+  padding: $gap;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+@media (width >= 992px) {
+  .page-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .form-section {
+    flex: 2;
+    margin-right: $gap;
+  }
+
+  .cart-section {
+    margin-top: 0;
+    align-self: flex-start;
+    max-height: none;
   }
 }
 </style>

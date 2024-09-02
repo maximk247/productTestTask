@@ -1,6 +1,6 @@
 <template>
   <div class="sort">
-    <label for="sort">Сортировка:</label>
+    <label class="sort__label" for="sort">Сортировка:</label>
     <select
       id="sort"
       :value="selectedSort"
@@ -34,11 +34,33 @@ const updateSort = (event: Event) => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .sort {
   display: flex;
   gap: 10px;
   align-items: center;
   justify-content: center;
+
+  &__label {
+    min-width: 75px;
+    font-size: 14px;
+  }
+
+  select {
+    font-size: 14px;
+  }
+
+  @media (width <= 576px) {
+    &__label,
+    select {
+      font-size: 12px;
+    }
+  }
+}
+
+@media (width <= 576px) {
+  .sort {
+    gap: 0;
+  }
 }
 </style>

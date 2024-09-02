@@ -40,10 +40,20 @@ const updateFilter = (event: Event) => {
 
   &__label {
     text-align: right;
+    font-size: 14px;
   }
 
   &__select {
     flex: 1;
+    min-width: 80px;
+    font-size: 14px;
+  }
+
+  @media (width <= 576px) {
+    &__label,
+    &__select {
+      font-size: 12px;
+    }
   }
 }
 </style>

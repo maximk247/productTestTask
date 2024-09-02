@@ -22,7 +22,7 @@ const handleSubmit = computed(() => props.submitProducts || (() => {}));
 const handleRemoveAll = computed(() => props.removeAllProducts || (() => {}));
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .cart-buttons {
   display: flex;
   flex-direction: column;

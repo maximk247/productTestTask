@@ -16,7 +16,7 @@
         class="search-bar__input"
         type="text"
         placeholder="Введите запрос"
-        @input="onSearch"
+        @input="handleInput"
       />
     </div>
   </div>
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { defineEmits, defineProps, ref } from 'vue';
+import { sanitizeInput } from '../../utils/sanitazeInput';
 
 const props = defineProps({
   initialQuery: {
@@ -40,6 +41,12 @@ const emit = defineEmits(['search']);
 
 const query = ref(props.initialQuery || '');
 const searchBy = ref(props.initialSearchBy || 'name');
+
+const handleInput = (event: Event) => {
+  const inputElement = event.target as HTMLInputElement;
+  query.value = sanitizeInput(inputElement.value);
+  onSearch();
+};
 
 const onSearch = () => {
   emit('search', { query: query.value, searchBy: searchBy.value });
@@ -72,6 +79,14 @@ $gap: 10px;
     border-radius: $border-radius;
     box-sizing: border-box;
     width: 100%;
+  }
+}
+
+@media (width <= 576px) {
+  .search-bar {
+    &__select-wrapper {
+      flex: 0 0 160px;
+    }
   }
 }
 </style>

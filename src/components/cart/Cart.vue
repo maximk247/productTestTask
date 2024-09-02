@@ -28,26 +28,16 @@
 </template>
 
 <script setup lang="ts">
-import { Product } from '../../interfaces/ProductInterfaces';
+import { CartProps } from '../../interfaces/props/CartPropsInterfaces';
 import CartButtons from './CartButtons.vue';
 import CartItem from './CartItem.vue';
 
-interface Props {
-  cartItems: Product[];
-  updateQuantity: (index: number, quantity: number) => void;
-  increaseQuantity: (index: number) => void;
-  decreaseQuantity: (index: number) => void;
-  removeProduct: (event: MouseEvent, index: number) => void;
-  submitProducts: () => void;
-  removeAllProducts: () => void;
-}
-
-defineProps<Props>();
+defineProps<CartProps>();
 </script>
 
 <style scoped lang="scss">
 $background-color: #f8f9fa;
-$box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 $border-radius: 8px;
 $padding: 15px;
 $margin-bottom: 15px;
@@ -71,7 +61,6 @@ $margin-bottom: 15px;
     flex-grow: 1;
     overflow-y: auto;
     margin-bottom: $margin-bottom;
-    padding-right: 10px;
     padding: $padding;
     display: flex;
     flex-direction: column;
