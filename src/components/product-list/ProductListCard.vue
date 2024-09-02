@@ -1,90 +1,140 @@
 <template>
   <div class="product-card">
-    <div class="image-preview">
-      <img v-if="product.image" :src="product.image" alt="Изображение товара" />
+    <div class="product-card__image-preview">
+      <img
+        v-if="product.image"
+        :src="product.image"
+        alt="Изображение товара"
+        class="product-card__image"
+      />
     </div>
-    <div class="product-details">
-      <div><strong>Название:</strong> {{ product.name }}</div>
-      <div><strong>Продавец:</strong> {{ product.seller }}</div>
-      <div><strong>Тип интеграции:</strong> {{ product.integrationType }}</div>
-      <div><strong>Количество:</strong> {{ product.quantity }}</div>
+    <div class="product-card__details">
+      <div class="product-card__detail">
+        <strong>Название:</strong> {{ product.name || 'Без названия' }}
+      </div>
+      <div class="product-card__detail">
+        <strong>Селлер:</strong> {{ product.seller || 'Без селлера' }}
+      </div>
+      <div class="product-card__detail">
+        <strong>Тип интеграции:</strong> {{ product.integrationType }}
+      </div>
+      <div class="product-card__detail">
+        <strong>Количество:</strong> {{ product.quantity }}
+      </div>
     </div>
-    <div class="button-group">
-      <button @click="openEditModal">Редактировать</button>
-      <button @click="removeProduct">Удалить</button>
+    <div class="product-card__buttons">
+      <button class="product-card__button" @click="openEditModal">
+        Редактировать
+      </button>
+      <button
+        class="product-card__button product-card__button--remove"
+        @click="removeProduct"
+      >
+        Удалить
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineEmits, defineProps } from 'vue';
+import { Product } from '../../interfaces/ProductInterfaces';
 
 const props = defineProps({
-  product: Object,
-  index: Number,
+  product: {
+    type: Object as () => Record<string, any>,
+    required: true,
+    default: (): Product => ({
+      name: 'Без названия',
+      seller: 'Без селлера',
+      integrationType: '',
+      quantity: 0,
+      image: '',
+      id: '',
+    }),
+  },
 });
 
 const emit = defineEmits(['edit', 'remove']);
 
 const openEditModal = () => {
-  emit('edit', props.product, props.index);
+  emit('edit', props.product, props.product.id);
 };
 
 const removeProduct = () => {
-  emit('remove', props.index);
+  emit('remove', props.product.id);
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$product-card-bg: #f9f9f9;
+$product-card-border-radius: 8px;
+$product-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+$product-card-padding: 15px;
+$product-card-detail-gap: 5px;
+$button-bg-color: #007bff;
+$button-remove-bg-color: #dc3545;
+$button-text-color: #fff;
+$button-hover-opacity: 0.8;
+
 .product-card {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: $product-card-bg;
+  padding: $product-card-padding;
+  border-radius: $product-card-border-radius;
+  box-shadow: $product-card-shadow;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
 
-.image-preview {
-  width: 100%;
-  height: 150px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
+  &__image-preview {
+    width: 100%;
+    height: 150px;
+    background-color: #f0f0f0;
+    border-radius: $product-card-border-radius;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 
-.image-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
 
-.product-details {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: $product-card-detail-gap;
+    margin-top: 10px;
+  }
 
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
+  &__detail {
+    font-size: 14px;
+  }
 
-button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-}
+  &__buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
 
-button:hover {
-  opacity: 0.8;
+  &__button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: $product-card-border-radius;
+    cursor: pointer;
+    background-color: $button-bg-color;
+    color: $button-text-color;
+
+    &:hover {
+      opacity: $button-hover-opacity;
+    }
+
+    &--remove {
+      background-color: $button-remove-bg-color;
+    }
+  }
 }
 </style>

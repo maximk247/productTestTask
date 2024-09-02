@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
-    <div class="form-container">
-      <h2>Добавить товары</h2>
-      <div class="product-grid">
+  <div class="page-container">
+    <div class="form-section">
+      <h2 class="form-section__title">Добавить товары</h2>
+      <div class="form-section__grid">
         <ProductFormCard
           v-for="(product, index) in cartItems"
           :key="index"
@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { Product } from '../../interfaces/ProductInterfaces';
 import Cart from '../cart/Cart.vue';
 import AddProductBlock from './AddProductBlock.vue';
 import ProductFormCard from './ProductFormCard.vue';
@@ -111,30 +112,44 @@ const removeAllProducts = () => {
   });
 };
 
-const sanitizeInput = (product, field) => {
+const sanitizeInput = (product: Product, field: string) => {
   // Убираем лишние пробелы и предотвращаем пробелы в начале строки
   product[field] = product[field].replace(/^\s+/, '').replace(/\s{2,}/g, ' ');
 };
 </script>
 
-<style scoped>
-.container {
+<style scoped lang="scss">
+$page-padding: 20px;
+$gap: 20px;
+$container-background: #fff;
+$border-radius: 8px;
+
+.page-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  padding: 20px;
+  gap: $gap;
+  overflow-x: hidden;
+  padding: 0 $page-padding 0 $page-padding;
+  box-sizing: border-box;
 }
 
-.form-container {
+.form-section {
   flex: 2;
-}
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  max-height: 600px;
-  overflow-y: auto;
-  padding-right: 10px;
+  &__title {
+    font-size: 24px;
+    margin-bottom: $gap;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $gap;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+    background-color: $container-background;
+    border-radius: $border-radius;
+  }
 }
 </style>

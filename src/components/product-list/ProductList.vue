@@ -1,8 +1,12 @@
 <template>
-  <div>
-    <h2>Список товаров</h2>
+  <div class="product-list">
+    <h2 class="product-list__title">Список товаров</h2>
 
-    <SearchBar :initial-query="searchQuery" @search="applySearch" />
+    <SearchBar
+      :initial-query="searchQuery"
+      :initial-search-by="searchBy"
+      @search="applySearch"
+    />
 
     <FilterSort
       :selected-filter="selectedFilter"
@@ -11,30 +15,39 @@
       @sort="applySort"
     />
 
-    <div class="product-grid">
+    <div class="product-list__grid">
       <ProductListCard
-        v-for="(product, index) in paginatedProducts"
-        :key="index"
+        v-for="product in paginatedProducts"
+        :key="product.id"
         :product="product"
-        :index="index"
         @edit="openEditModal"
         @remove="deleteProduct"
       />
     </div>
 
-    <Pagination
-      :current-page="currentPage"
-      :has-more="hasMore"
-      @first-page="goToFirstPage"
-      @prev-page="prevPage"
-      @next-page="nextPage"
-      @last-page="goToLastPage"
-    />
+    <div class="product-list__controls">
+      <button
+        class="product-list__delete-all-btn remove-button"
+        :disabled="paginatedProducts.length === 0"
+        @click="removeAllProducts"
+      >
+        Удалить все товары
+      </button>
+
+      <Pagination
+        :current-page="currentPage"
+        :has-more="hasMore"
+        @first-page="goToFirstPage"
+        @prev-page="prevPage"
+        @next-page="nextPage"
+        @last-page="goToLastPage"
+      />
+    </div>
 
     <EditProductModal
       v-if="isEditModalOpen"
+      :id="selectedProductId"
       :product="selectedProduct"
-      :index="selectedIndex"
       @close="closeEditModal"
       @save="saveProductChanges"
     />
@@ -44,6 +57,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
+import { Product } from '../../interfaces/ProductInterfaces';
 import FilterSort from '../filter-sort/FilterSort.vue';
 import Pagination from '../shared/Pagination.vue';
 import EditProductModal from './EditProductModal.vue';
@@ -52,9 +66,10 @@ import SearchBar from './SearchBar.vue';
 
 const store = useStore();
 
-const searchQuery = ref('');
-const selectedFilter = ref('all');
-const selectedSort = ref('name_asc');
+const searchQuery = ref<string>('');
+const searchBy = ref<string>('name');
+const selectedFilter = computed(() => store.state.filterType);
+const selectedSort = computed(() => store.state.sortOrder);
 
 const currentPage = computed(() => store.state.currentPage);
 const itemsPerPage = computed(() => store.state.itemsPerPage);
@@ -68,11 +83,18 @@ const totalPages = computed(() =>
 
 const paginatedProducts = computed(() => {
   return store.getters.filteredAndSortedProducts
-    .filter(
-      product =>
-        product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        product.seller.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
+    .filter((product: Product) => {
+      if (searchBy.value === 'name') {
+        return product.name
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase());
+      } else if (searchBy.value === 'seller') {
+        return product.seller
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase());
+      }
+      return false;
+    })
     .slice(
       (currentPage.value - 1) * itemsPerPage.value,
       currentPage.value * itemsPerPage.value
@@ -80,8 +102,8 @@ const paginatedProducts = computed(() => {
 });
 
 const isEditModalOpen = ref(false);
-const selectedProduct = ref(null);
-const selectedIndex = ref(null);
+const selectedProduct = ref<Record<string, any> | null | undefined>(null);
+const selectedProductId = ref<string | undefined>('');
 
 const goToFirstPage = () => {
   store.dispatch('setPage', 1);
@@ -103,13 +125,17 @@ const goToLastPage = () => {
   store.dispatch('setPage', totalPages.value);
 };
 
-const deleteProduct = (index: number) => {
-  store.dispatch('removeProduct', index);
+const deleteProduct = (id: string) => {
+  store.dispatch('removeProduct', id);
 };
 
-const openEditModal = (product: any, index: number) => {
+const removeAllProducts = () => {
+  store.dispatch('removeAllProducts');
+};
+
+const openEditModal = (product: Record<string, any>, id: string) => {
   selectedProduct.value = { ...product };
-  selectedIndex.value = index;
+  selectedProductId.value = id;
   isEditModalOpen.value = true;
 };
 
@@ -119,55 +145,77 @@ const closeEditModal = () => {
 
 const saveProductChanges = ({
   product,
-  index,
+  id,
 }: {
-  product: any;
-  index: number;
+  product: Record<string, any>;
+  id: string;
 }) => {
-  store.dispatch('updateProduct', { product, index });
+  store.dispatch('updateProduct', { product, id });
   closeEditModal();
 };
 
-const applyFilter = () => {
-  store.dispatch('setFilterType', selectedFilter.value);
+const applyFilter = (newFilter: string) => {
+  store.dispatch('setFilterType', newFilter);
 };
 
-const applySort = () => {
-  store.dispatch('setSortOrder', selectedSort.value);
+const applySort = (newSort: string) => {
+  store.dispatch('setSortOrder', newSort);
 };
 
-const applySearch = (query: string) => {
+const applySearch = ({
+  query,
+  searchBy: newSearchBy,
+}: {
+  query: string;
+  searchBy: string;
+}) => {
   searchQuery.value = query;
+  searchBy.value = newSearchBy;
 };
 </script>
 
-<style scoped>
-h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
+<style scoped lang="scss">
+$product-list-title-font-size: 24px;
+$product-list-grid-gap: 20px;
+$product-list-grid-min-height: 450px;
+$product-list-grid-max-height: calc(100vh - 700px);
+$product-list-grid-columns: repeat(5, 1fr);
+$product-list-grid-padding: 10px;
+$border-color: #ccc;
+$input-padding: 8px 12px;
+$border-radius: 5px;
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  margin-top: 20px;
-  min-height: 625px;
-  align-content: start;
-  overflow-x: hidden;
-  max-width: 100%;
+.product-list {
+  padding: 0 15px;
   box-sizing: border-box;
-}
+  &__title {
+    font-size: $product-list-title-font-size;
+  }
 
-.search-bar {
-  margin-bottom: 20px;
-}
+  &__grid {
+    display: grid;
+    grid-template-columns: $product-list-grid-columns;
+    gap: $product-list-grid-gap;
+    margin-top: 5px;
+    min-height: $product-list-grid-min-height;
+    max-height: $product-list-grid-max-height;
+    overflow-y: auto;
+    align-content: start;
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: $product-list-grid-padding;
+  }
+  &__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+  }
 
-.search-bar input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
+  &__delete-all-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 }
 </style>

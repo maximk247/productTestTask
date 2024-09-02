@@ -1,7 +1,12 @@
 <template>
   <div class="filter">
-    <label for="filter">Фильтр по интеграции:</label>
-    <select id="filter" :value="selectedFilter" @change="updateFilter($event)">
+    <label for="filter" class="filter__label">Фильтр по интеграции:</label>
+    <select
+      id="filter"
+      :value="selectedFilter"
+      class="filter__select select"
+      @change="updateFilter($event)"
+    >
       <option value="all">Все</option>
       <option value="reels">Reels</option>
       <option value="stories">Stories</option>
@@ -12,23 +17,33 @@
 <script setup lang="ts">
 import { defineEmits, defineProps } from 'vue';
 
-const props = defineProps({
-  selectedFilter: String,
+defineProps({
+  selectedFilter: {
+    type: String,
+    default: 'all',
+  },
 });
 
-const emit = defineEmits(['update:selectedFilter', 'filter']);
+const emit = defineEmits(['update:selectedFilter']);
 
 const updateFilter = (event: Event) => {
   const newValue = (event.target as HTMLSelectElement).value;
   emit('update:selectedFilter', newValue);
-  emit('filter');
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .filter {
   display: flex;
   gap: 10px;
   align-items: center;
+
+  &__label {
+    text-align: right;
+  }
+
+  &__select {
+    flex: 1;
+  }
 }
 </style>

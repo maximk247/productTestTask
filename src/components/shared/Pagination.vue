@@ -1,17 +1,40 @@
 <template>
-  <div class="pagination-buttons">
-    <button :disabled="currentPage === 1" @click="goToFirstPage">Первая</button>
-    <button :disabled="currentPage === 1" @click="prevPage">Предыдущая</button>
-    <button :disabled="!hasMore" @click="nextPage">Следующая</button>
-    <button :disabled="!hasMore" @click="goToLastPage">Последняя</button>
+  <div class="pagination">
+    <button
+      class="pagination__button"
+      :disabled="currentPage === 1"
+      @click="goToFirstPage"
+    >
+      Первая
+    </button>
+    <button
+      class="pagination__button"
+      :disabled="currentPage === 1"
+      @click="prevPage"
+    >
+      Предыдущая
+    </button>
+    <button class="pagination__button" :disabled="!hasMore" @click="nextPage">
+      Следующая
+    </button>
+    <button
+      class="pagination__button"
+      :disabled="!hasMore"
+      @click="goToLastPage"
+    >
+      Последняя
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineEmits, defineProps } from 'vue';
 
-const props = defineProps({
-  currentPage: Number,
+defineProps({
+  currentPage: {
+    type: Number,
+    default: 1,
+  },
   hasMore: Boolean,
 });
 
@@ -34,32 +57,34 @@ const goToLastPage = () => {
 };
 </script>
 
-<style scoped>
-.pagination-buttons {
+<style scoped lang="scss">
+$pagination-button-bg: #007bff;
+$pagination-button-disabled-bg: #ccc;
+$pagination-button-color: #fff;
+$border-radius: 5px;
+
+.pagination {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
   gap: 10px;
-}
 
-.pagination-buttons > button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+  &__button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+    background-color: $pagination-button-bg;
+    color: $pagination-button-color;
+    transition: opacity 0.3s;
 
-.pagination-buttons > button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+    &:disabled {
+      background-color: $pagination-button-disabled-bg;
+      cursor: not-allowed;
+    }
 
-.pagination-buttons > button:not(:disabled) {
-  background-color: #007bff;
-  color: white;
-}
-
-.pagination-buttons > button:not(:disabled):hover {
-  opacity: 0.8;
+    &:not(:disabled):hover {
+      opacity: 0.8;
+    }
+  }
 }
 </style>

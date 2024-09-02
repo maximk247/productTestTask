@@ -1,49 +1,61 @@
 <template>
   <div class="filter-sort">
     <Filter
-      :selected-filter="selectedFilter"
+      :selected-filter="localSelectedFilter"
       @update:selected-filter="updateSelectedFilter"
-      @filter="filter"
     />
     <Sort
-      :selected-sort="selectedSort"
+      :selected-sort="localSelectedSort"
       @update:selected-sort="updateSelectedSort"
-      @sort="sort"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps } from 'vue';
+import { defineEmits, defineProps, ref, watch } from 'vue';
 import Filter from './Filter.vue';
 import Sort from './Sort.vue';
 
 const props = defineProps({
-  selectedFilter: String,
-  selectedSort: String,
+  selectedFilter: {
+    type: String,
+    default: 'all',
+  },
+  selectedSort: {
+    type: String,
+    default: 'none',
+  },
 });
 
-const emit = defineEmits([
-  'update:selectedFilter',
-  'update:selectedSort',
-  'filter',
-  'sort',
-]);
+const emit = defineEmits(['filter', 'sort']);
+
+// Создаем локальные копии пропсов
+const localSelectedFilter = ref(props.selectedFilter);
+const localSelectedSort = ref(props.selectedSort);
+
+// Следим за изменениями пропсов и синхронизируем с локальными копиями
+watch(
+  () => props.selectedFilter,
+  newVal => {
+    localSelectedFilter.value = newVal;
+  }
+);
+
+watch(
+  () => props.selectedSort,
+  newVal => {
+    localSelectedSort.value = newVal;
+  }
+);
 
 const updateSelectedFilter = (newValue: string) => {
-  emit('update:selectedFilter', newValue);
+  localSelectedFilter.value = newValue;
+  emit('filter', newValue);
 };
 
 const updateSelectedSort = (newValue: string) => {
-  emit('update:selectedSort', newValue);
-};
-
-const filter = () => {
-  emit('filter');
-};
-
-const sort = () => {
-  emit('sort');
+  localSelectedSort.value = newValue;
+  emit('sort', newValue);
 };
 </script>
 

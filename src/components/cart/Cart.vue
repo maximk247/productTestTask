@@ -1,9 +1,9 @@
 <template>
-  <div class="cart-container">
-    <h2>Корзина товаров</h2>
-    <div class="cart-items">
+  <div class="cart">
+    <h2 class="cart__title">Корзина товаров</h2>
+    <div class="cart__items">
       <div v-if="cartItems.length > 0">
-        <ul>
+        <ul class="cart__list">
           <CartItem
             v-for="(product, index) in cartItems"
             :key="index"
@@ -16,7 +16,7 @@
           />
         </ul>
       </div>
-      <div v-else>
+      <div v-else class="cart__empty-message">
         <p>Корзина пуста</p>
       </div>
     </div>
@@ -28,45 +28,68 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { Product } from '../../interfaces/ProductInterfaces';
 import CartButtons from './CartButtons.vue';
 import CartItem from './CartItem.vue';
 
-const props = defineProps({
-  cartItems: Array,
-  updateQuantity: Function,
-  increaseQuantity: Function,
-  decreaseQuantity: Function,
-  removeProduct: Function,
-  submitProducts: Function,
-  removeAllProducts: Function,
-});
+interface Props {
+  cartItems: Product[];
+  updateQuantity: (index: number, quantity: number) => void;
+  increaseQuantity: (index: number) => void;
+  decreaseQuantity: (index: number) => void;
+  removeProduct: (event: MouseEvent, index: number) => void;
+  submitProducts: () => void;
+  removeAllProducts: () => void;
+}
+
+defineProps<Props>();
 </script>
 
-<style scoped>
-.cart-container {
-  width: 300px;
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  max-height: calc(100vh - 250px);
-}
+<style scoped lang="scss">
+$background-color: #f8f9fa;
+$box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$border-radius: 8px;
+$padding: 15px;
+$margin-bottom: 15px;
 
-.cart-items {
-  flex-grow: 1;
-  overflow-y: auto;
-  margin-bottom: 15px;
-  padding-right: 10px;
-}
+.cart {
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 10px;
+  max-height: 580px;
+  box-sizing: border-box;
 
-.cart-items ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+  &__title {
+    font-size: 1.5rem;
+    padding-bottom: $margin-bottom;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  &__items {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: $margin-bottom;
+    padding-right: 10px;
+    padding: $padding;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    max-height: calc(100vh - 330px);
+  }
+
+  &__list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  &__empty-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #6c757d;
+  }
 }
 </style>
